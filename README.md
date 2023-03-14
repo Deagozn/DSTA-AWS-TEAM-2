@@ -9,3 +9,6 @@ Ideas:
 3. Analyse text messages / calls and state how likely it is to be a scam
 
 4. Border control : check images on sea and causeway
+
+5. Lazy Idea: covid cases predictor
+
