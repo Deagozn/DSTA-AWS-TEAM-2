@@ -7,6 +7,7 @@ import sagemaker
 from sagemaker import get_execution_role
 import pandas as pd
 import numpy as np
+import json
 
 mySession = boto3.session.Session()
 awsRegion = mySession.region_name
@@ -14,11 +15,12 @@ role = get_execution_role()
 
 rekognition = boto3.client('rekognition')
 comprehend = boto3.client(service_name='comprehend', region_name = awsRegion)
+transcribe = boto3.client('transcribe')
 s3 = boto3.client('s3')
 
-tempFolder = 'm1tmp/'
+tempFolder = 'm1tmp/' #not working atm
 
-IbucketName = "bucktest5354-" + awsRegion
+IbucketName = "bucktest-" + awsRegion
 
 def drawBoundingBoxes (sourceImage, boxes):
     # blue, green, red, grey
@@ -89,72 +91,90 @@ def rekog(Dimage,detect): # image to be in STR format ; detect to be in LIST for
 def compre(Ctext, identifier):  # Ctext is the text to be analyzed ; identifier is the tyoe of data to be analyzed
     if identifier.lower() == "named entities":
         detected_entities = comprehend.detect_entities(Text = Ctext, LanguageCode = 'en')
-        detected_entities_df = pd.DataFrame([ [entity['Text'], entity['Type'], entity['Score']] for entity in detected_entities['Entities']],
+        detectec_entities_df = pd.DataFrame([ [entity['Text'], entity['Type'], entity['Score']] for entity in detected_entities['Entities']],
                 columns=['Text', 'Type', 'Score'])
         print("This was the text analyzed:")
-        print()
         print(Ctext)
         print()
-        display(detected_entities_df)
+        display(detectec_entities_df)
 
     elif identifier.lower() == "key phrases":
         detected_key_phrases = comprehend.detect_key_phrases(Text = Ctext, LanguageCode = 'en')
-        detected_key_phrases_df = pd.DataFrame([ [entity['Text'], entity['Score']] for entity in detected_key_phrases['KeyPhrases']],
-                columns=['Text', 'Score'])
+        detectec_key_phrases_df = pd.DataFrame([ [entity['Text'], entity['Type'], entity['Score']] for entity in detected_key_phrases['Entities']],
+                columns=['Text', 'Type', 'Score'])
         print("This was the text analyzed:")
-        print()
         print(Ctext)
         print()
-        display(detected_key_phrases_df)
+        display(detectec_key_phrases_df)
     
     elif identifier.lower() == "dominant language":
-        detected_language = comprehend.detect_dominant_language(Text = Ctext)
-        detected_language_df = pd.DataFrame([ [code['LanguageCode'], code['Score']] for code in detected_language['Languages']],
-                columns=['Language Code', 'Score'])
+        detected_language = comprehend.detect_dominant_language(Text = Ctext, LanguageCode = 'en')
+        detectec_language_df = pd.DataFrame([ [entity['Text'], entity['Type'], entity['Score']] for entity in detected_language['Entities']],
+                columns=['Text', 'Type', 'Score'])
         print("This was the text analyzed:")
-        print()
         print(Ctext)
         print()
-        display(detected_language_df)
+        display(detectec_language_df)
 
     elif identifier.lower() == "emotional sentiment":
         detected_sentiment = comprehend.detect_sentiment(Text = Ctext, LanguageCode = 'en')
         predominant_sentiment = detected_sentiment['Sentiment']
-        detected_sentiments_df = pd.DataFrame([ [sentiment, detected_sentiment['SentimentScore'][sentiment]] for sentiment in detected_sentiment['SentimentScore']],
-                columns=['Language Code', 'Score'])
+        detectec_sentiment_df = pd.DataFrame([ [entity['Text'], entity['Type'], entity['Score']] for entity in detected_sentiment['Entities']],
+                columns=['Text', 'Type', 'Score'])
         print("This was the text analyzed:")
         print(Ctext)
         print()
         print("The predominant sentiment is {}.".format(predominant_sentiment))
         print()
-        display(detected_sentiments_df)
+        display(detectec_sentiment_df)
 
     elif identifier.lower() == "syntax":
         detected_syntax = comprehend.detect_syntax(Text = Ctext, LanguageCode = 'en')
-        detected_syntax_df = pd.DataFrame([ [part['Text'], part['PartOfSpeech']['Tag'], part['PartOfSpeech']['Score']] for part in detected_syntax['SyntaxTokens']],
-                columns=['Text', 'Part Of Speech', 'Score'])
+        detectec_syntax_df = pd.DataFrame([ [entity['Text'], entity['Type'], entity['Score']] for entity in detected_syntax['Entities']],
+                columns=['Text', 'Type', 'Score'])
         print("This was the text analyzed:")
-        print()
         print(Ctext)
         print()
-        display(detected_syntax_df)
+        display(detectec_syntax_df)
     
     elif identifier.lower() == "pii":
         detected_pii_entities = comprehend.detect_pii_entities(Text = Ctext, LanguageCode = 'en')
-        detected_pii_entities_df = pd.DataFrame([ [entity['Type'], entity['Score']] for entity in detected_pii_entities['Entities']],
-                columns=['Type', 'Score'])
+        detectec_pii_entities_df = pd.DataFrame([ [entity['Text'], entity['Type'], entity['Score']] for entity in detected_pii_entities['Entities']],
+                columns=['Text', 'Type', 'Score'])
         print("This was the text analyzed:")
-        print()
         print(Ctext)
         print()
-        display(detected_pii_entities_df)
+        display(detectec_pii_entities_df)
     
     elif identifier.lower() == "pii labels":
         detected_pii_labels = comprehend.contains_pii_entities(Text = Ctext, LanguageCode = 'en')
-        detected_pii_labels_df = pd.DataFrame([ [entity['Name'], entity['Score']] for entity in detected_pii_labels['Labels']],
-                columns=['Name', 'Score'])
+        detectec_pii_labels_df = pd.DataFrame([ [entity['Text'], entity['Type'], entity['Score']] for entity in detected_pii_labels['Entities']],
+                columns=['Text', 'Type', 'Score'])
         print("This was the text analyzed:")
-        print()
         print(Ctext)
         print()
-        display(detected_pii_labels_df)
+        display(detectec_pii_labels_df)
+
+def trscbe(job_name, file, m_format): #all variables should be in STR form
+    transcribe.start_transcription_job(
+        TranscriptionJobName = job_name,
+        Media = {'MediaFileUri': file},
+        MediaFormat = m_format,
+        LanguageCode = 'en-US',
+        OutputBucketName = "bucktest5354"
+    )
+    max_tries = 60
+    while max_tries > 0:
+        max_tries -= 1
+        job = transcribe.get_transcription_job(TranscriptionJobName=job_name)
+        job_status = job['TranscriptionJob']['TranscriptionJobStatus']
+        if job_status in ['COMPLETED', 'FAILED']:
+            print(f"Job {job_name} is {job_status}.")
+            if job_status == 'COMPLETED':
+                print(
+                    f"Download the transcript from\n"
+                    f"\t{job['TranscriptionJob']['Transcript']['TranscriptFileUri']}.")
+            break
+        else:
+            print(f"Waiting for {job_name}. Current status is {job_status}.")
+        time.sleep(10)
