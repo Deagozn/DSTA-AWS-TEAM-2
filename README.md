@@ -1,4 +1,4 @@
-# DSTA-AWS-TEAM-2
+# DSTA-AWS-Dcyber[V]
 
 Ideas:
 1. Use text analysis/predict to analyse network traffic (captured using Wireshark) and detect possible cyber attack attempts in real time ( not sure if feasible, need    more research ;-; ) --> using comprehend
