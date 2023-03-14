@@ -4,8 +4,6 @@ import os
 from PIL import Image, ImageDraw, ImageFont
 from IPython.display import HTML, display, Image as IImage
 
-
-
 mySession = boto3.session.Session()
 awsRegion = mySession.region_name
 
