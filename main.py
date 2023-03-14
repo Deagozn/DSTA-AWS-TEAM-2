@@ -16,7 +16,8 @@ role = get_execution_role()
 rekognition = boto3.client('rekognition')
 comprehend = boto3.client(service_name='comprehend', region_name = awsRegion)
 transcribe = boto3.client('transcribe')
-s3 = boto3.client('s3')
+s3c = boto3.client('s3')
+s3r = boto3.resource('s3')
 
 tempFolder = 'm1tmp/' #not working atm
 
@@ -28,7 +29,7 @@ def drawBoundingBoxes (sourceImage, boxes):
     
     # Download image locally
     imageLocation = tempFolder+os.path.basename(sourceImage)
-    s3.download_file(IbucketName, sourceImage, imageLocation)
+    s3c.download_file(IbucketName, sourceImage, imageLocation)
 
     # Draws BB on Image
     bbImage = Image.open(imageLocation)
@@ -60,7 +61,7 @@ def drawBoundingBoxes (sourceImage, boxes):
 
 def rekog(Dimage,detect): # image to be in STR format ; detect to be in LIST format
 
-    display(IImage(url=s3.generate_presigned_url('get_object', Params={'Bucket': IbucketName, 'Key': Dimage}))) #dispay the image
+    display(IImage(url=s3c.generate_presigned_url('get_object', Params={'Bucket': IbucketName, 'Key': Dimage}))) #dispay the image
 
     detectLabelsResponse = rekognition.detect_labels(
     Image=
@@ -171,10 +172,24 @@ def trscbe(job_name, file, m_format): #all variables should be in STR form
         if job_status in ['COMPLETED', 'FAILED']:
             print(f"Job {job_name} is {job_status}.")
             if job_status == 'COMPLETED':
-                print(
-                    f"Download the transcript from\n"
-                    f"\t{job['TranscriptionJob']['Transcript']['TranscriptFileUri']}.")
+                print()
             break
         else:
             print(f"Waiting for {job_name}. Current status is {job_status}.")
         time.sleep(10)
+    
+    content_object = s3r.Object('bucktest5354', job_name + '.json')
+    file_content = content_object.get()['Body'].read().decode('utf-8')
+    json_content = json.loads(file_content)
+    transcript_df = pd.DataFrame([ [entity['transcript']] for entity in json_content['results']['transcripts']],
+                columns=['Transcript'])
+    print(transcript_df.to_string(index=False))
+
+
+def main():             #Wrtie main code here
+    print("start")
+
+
+
+if __name__ == "__main__":
+    main()
