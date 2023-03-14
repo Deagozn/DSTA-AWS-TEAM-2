@@ -182,7 +182,8 @@ def trscbe(job_name, file, m_format): #all variables should be in STR form
     file_content = content_object.get()['Body'].read().decode('utf-8')
     json_content = json.loads(file_content)
     transcript_df = pd.DataFrame([ [entity['transcript']] for entity in json_content['results']['transcripts']],
-                columns=['Transcript'])
+                columns=[''])
+    print("Transcribed: ")
     print(transcript_df.to_string(index=False))
 
 
