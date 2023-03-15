@@ -8,153 +8,154 @@ from sagemaker import get_execution_role
 import pandas as pd
 import numpy as np
 import json
+import tarfile
 
 mySession = boto3.session.Session()
 awsRegion = mySession.region_name
 role = get_execution_role()
 
-rekognition = boto3.client('rekognition')
+#rekognition = boto3.client('rekognition')
 comprehend = boto3.client(service_name='comprehend', region_name = awsRegion)
 transcribe = boto3.client('transcribe')
 s3c = boto3.client('s3')
 s3r = boto3.resource('s3')
 
-tempFolder = 'm1tmp/' #not working atm
+#tempFolder = 'm1tmp/' #not working atm
 
-IbucketName = "bucktest-" + awsRegion
+#IbucketName = "bucket9069-" + awsRegion
 
-def drawBoundingBoxes (sourceImage, boxes):
-    # blue, green, red, grey
-    colors = ((255,255,255),(255,255,255),(76,182,252),(52,194,123))
+# def drawBoundingBoxes (sourceImage, boxes):
+#     # blue, green, red, grey
+#     colors = ((255,255,255),(255,255,255),(76,182,252),(52,194,123))
     
-    # Download image locally
-    imageLocation = tempFolder+os.path.basename(sourceImage)
-    s3c.download_file(IbucketName, sourceImage, imageLocation)
+#     # Download image locally
+#     imageLocation = tempFolder+os.path.basename(sourceImage)
+#     s3c.download_file(IbucketName, sourceImage, imageLocation)
 
-    # Draws BB on Image
-    bbImage = Image.open(imageLocation)
-    draw = ImageDraw.Draw(bbImage)
-    width, height = bbImage.size
-    col = 0
-    maxcol = len(colors)
-    line= 3
-    for box in boxes:
-        x1 = int(box[1]['Left'] * width)
-        y1 = int(box[1]['Top'] * height)
-        x2 = int(box[1]['Left'] * width + box[1]['Width'] * width)
-        y2 = int(box[1]['Top'] * height + box[1]['Height']  * height)
+#     # Draws BB on Image
+#     bbImage = Image.open(imageLocation)
+#     draw = ImageDraw.Draw(bbImage)
+#     width, height = bbImage.size
+#     col = 0
+#     maxcol = len(colors)
+#     line= 3
+#     for box in boxes:
+#         x1 = int(box[1]['Left'] * width)
+#         y1 = int(box[1]['Top'] * height)
+#         x2 = int(box[1]['Left'] * width + box[1]['Width'] * width)
+#         y2 = int(box[1]['Top'] * height + box[1]['Height']  * height)
         
-        draw.text((x1,y1),box[0],colors[col])
-        for l in range(line):
-            draw.rectangle((x1-l,y1-l,x2+l,y2+l),outline=colors[col])
-        col = (col+1)%maxcol
+#         draw.text((x1,y1),box[0],colors[col])
+#         for l in range(line):
+#             draw.rectangle((x1-l,y1-l,x2+l,y2+l),outline=colors[col])
+#         col = (col+1)%maxcol
     
-    imageFormat = "PNG"
-    ext = sourceImage.lower()
-    if(ext.endswith('jpg') or ext.endswith('jpeg')):
-        imageFormat = 'JPEG'
+#     imageFormat = "PNG"
+#     ext = sourceImage.lower()
+#     if(ext.endswith('jpg') or ext.endswith('jpeg')):
+#         imageFormat = 'JPEG'
 
-    bbImage.save(imageLocation,format=imageFormat)
+#     bbImage.save(imageLocation,format=imageFormat)
 
-    display(bbImage)
+#     display(bbImage)
 
 
-def rekog(Dimage,detect): # image to be in STR format ; detect to be in LIST format
+# def rekog(Dimage,detect): # image to be in STR format ; detect to be in LIST format
 
-    display(IImage(url=s3c.generate_presigned_url('get_object', Params={'Bucket': IbucketName, 'Key': Dimage}))) #dispay the image
+#     display(IImage(url=s3c.generate_presigned_url('get_object', Params={'Bucket': IbucketName, 'Key': Dimage}))) #dispay the image
 
-    detectLabelsResponse = rekognition.detect_labels(
-    Image=
-    {
-        'S3Object': 
-        {
-            'Bucket': IbucketName,
-            'Name': Dimage,
-        }
-    }
-    )
+#     detectLabelsResponse = rekognition.detect_labels(
+#     Image=
+#     {
+#         'S3Object': 
+#         {
+#             'Bucket': IbucketName,
+#             'Name': Dimage,
+#         }
+#     }
+#     )
 
-    display(detectLabelsResponse)
+#     display(detectLabelsResponse)
 
-    for label in detectLabelsResponse["Labels"]:
-        if(label["Name"] in detect):
-            print("Detected object:")
-            print("- {} (Confidence: {})".format(label["Name"], label["Confidence"]))
+#     for label in detectLabelsResponse["Labels"]:
+#         if(label["Name"] in detect):
+#             print("Detected object:")
+#             print("- {} (Confidence: {})".format(label["Name"], label["Confidence"]))
     
-    boxes = []
-    objects = detectLabelsResponse['Labels']
-    for obj in objects:
-        for einstance in obj['Instances']:
-            boxes.append((obj['Name'], einstance['BoundingBox']))
+#     boxes = []
+#     objects = detectLabelsResponse['Labels']
+#     for obj in objects:
+#         for einstance in obj['Instances']:
+#             boxes.append((obj['Name'], einstance['BoundingBox']))
 
-    drawBoundingBoxes(Dimage, boxes)
+#     drawBoundingBoxes(Dimage, boxes)
 
 def compre(Ctext, identifier):  # Ctext is the text to be analyzed ; identifier is the tyoe of data to be analyzed
     if identifier.lower() == "named entities":
         detected_entities = comprehend.detect_entities(Text = Ctext, LanguageCode = 'en')
-        detectec_entities_df = pd.DataFrame([ [entity['Text'], entity['Type'], entity['Score']] for entity in detected_entities['Entities']],
+        detected_entities_df = pd.DataFrame([ [entity['Text'], entity['Type'], entity['Score']] for entity in detected_entities['Entities']],
                 columns=['Text', 'Type', 'Score'])
         print("This was the text analyzed:")
         print(Ctext)
         print()
-        display(detectec_entities_df)
+        display(detected_entities_df)
 
     elif identifier.lower() == "key phrases":
         detected_key_phrases = comprehend.detect_key_phrases(Text = Ctext, LanguageCode = 'en')
-        detectec_key_phrases_df = pd.DataFrame([ [entity['Text'], entity['Type'], entity['Score']] for entity in detected_key_phrases['Entities']],
-                columns=['Text', 'Type', 'Score'])
+        detected_key_phrases_df = pd.DataFrame([ [entity['Text'], entity['Score']] for entity in detected_key_phrases['KeyPhrases']],
+                columns=['Text', 'Score'])
         print("This was the text analyzed:")
         print(Ctext)
         print()
-        display(detectec_key_phrases_df)
+        display(detected_key_phrases_df)
     
     elif identifier.lower() == "dominant language":
-        detected_language = comprehend.detect_dominant_language(Text = Ctext, LanguageCode = 'en')
-        detectec_language_df = pd.DataFrame([ [entity['Text'], entity['Type'], entity['Score']] for entity in detected_language['Entities']],
-                columns=['Text', 'Type', 'Score'])
+        detected_language = comprehend.detect_dominant_language(Text = Ctext)
+        detected_language_df = pd.DataFrame([ [code['LanguageCode'], code['Score']] for code in detected_language['Languages']],
+                columns=['Language Code', 'Score'])
         print("This was the text analyzed:")
         print(Ctext)
         print()
-        display(detectec_language_df)
+        display(detected_language_df)
 
     elif identifier.lower() == "emotional sentiment":
         detected_sentiment = comprehend.detect_sentiment(Text = Ctext, LanguageCode = 'en')
         predominant_sentiment = detected_sentiment['Sentiment']
-        detectec_sentiment_df = pd.DataFrame([ [entity['Text'], entity['Type'], entity['Score']] for entity in detected_sentiment['Entities']],
-                columns=['Text', 'Type', 'Score'])
+        detected_sentiments_df = pd.DataFrame([ [sentiment, detected_sentiment['SentimentScore'][sentiment]] for sentiment in detected_sentiment['SentimentScore']],
+                columns=['Language Code', 'Score'])
         print("This was the text analyzed:")
         print(Ctext)
         print()
         print("The predominant sentiment is {}.".format(predominant_sentiment))
         print()
-        display(detectec_sentiment_df)
+        display(detected_sentiments_df)
 
     elif identifier.lower() == "syntax":
         detected_syntax = comprehend.detect_syntax(Text = Ctext, LanguageCode = 'en')
-        detectec_syntax_df = pd.DataFrame([ [entity['Text'], entity['Type'], entity['Score']] for entity in detected_syntax['Entities']],
-                columns=['Text', 'Type', 'Score'])
+        detected_syntax_df = pd.DataFrame([ [part['Text'], part['PartOfSpeech']['Tag'], part['PartOfSpeech']['Score']] for part in detected_syntax['SyntaxTokens']],
+                columns=['Text', 'Part Of Speech', 'Score'])
         print("This was the text analyzed:")
         print(Ctext)
         print()
-        display(detectec_syntax_df)
+        display(detected_syntax_df)
     
     elif identifier.lower() == "pii":
         detected_pii_entities = comprehend.detect_pii_entities(Text = Ctext, LanguageCode = 'en')
-        detectec_pii_entities_df = pd.DataFrame([ [entity['Text'], entity['Type'], entity['Score']] for entity in detected_pii_entities['Entities']],
-                columns=['Text', 'Type', 'Score'])
+        detected_pii_entities_df = pd.DataFrame([ [entity['Type'], entity['Score']] for entity in detected_pii_entities['Entities']],
+                columns=['Type', 'Score'])
         print("This was the text analyzed:")
         print(Ctext)
         print()
-        display(detectec_pii_entities_df)
+        display(detected_pii_entities_df)
     
     elif identifier.lower() == "pii labels":
         detected_pii_labels = comprehend.contains_pii_entities(Text = Ctext, LanguageCode = 'en')
-        detectec_pii_labels_df = pd.DataFrame([ [entity['Text'], entity['Type'], entity['Score']] for entity in detected_pii_labels['Entities']],
-                columns=['Text', 'Type', 'Score'])
+        detected_pii_labels_df = pd.DataFrame([ [entity['Name'], entity['Score']] for entity in detected_pii_labels['Labels']],
+                columns=['Name', 'Score'])
         print("This was the text analyzed:")
         print(Ctext)
         print()
-        display(detectec_pii_labels_df)
+        display(detected_pii_labels_df)
 
 def trscbe(job_name, file, m_format): #all variables should be in STR form
     transcribe.start_transcription_job(
@@ -162,7 +163,7 @@ def trscbe(job_name, file, m_format): #all variables should be in STR form
         Media = {'MediaFileUri': file},
         MediaFormat = m_format,
         LanguageCode = 'en-US',
-        OutputBucketName = "bucktest5354"
+        OutputBucketName = "bucket9069"
     )
     max_tries = 60
     while max_tries > 0:
@@ -178,7 +179,7 @@ def trscbe(job_name, file, m_format): #all variables should be in STR form
             print(f"Waiting for {job_name}. Current status is {job_status}.")
         time.sleep(10)
     
-    content_object = s3r.Object('bucktest5354', job_name + '.json')
+    content_object = s3r.Object('bucket9069', job_name + '.json')
     file_content = content_object.get()['Body'].read().decode('utf-8')
     json_content = json.loads(file_content)
     transcript_df = pd.DataFrame([ [entity['transcript']] for entity in json_content['results']['transcripts']],
@@ -186,9 +187,23 @@ def trscbe(job_name, file, m_format): #all variables should be in STR form
     print("Transcribed: ")
     print(transcript_df.to_string(index=False))
 
+def tar_decomp(c_file_name,e_file_name,location):               # c_file_name is the file to be decompressed, e_file_name is the file to be extracted, location is where to store the extracted file
+    file = tarfile.open(c_file_name)
+    file.extract(e_file_name,location)
+    file.close()
+
+
 
 def main():             #Wrtie main code here
     print("start")
+    trscbe('test2', 's3://bucket9069/WhatsApp Audio 2023-03-15 at 10.35.57.mp3', 'mp3')
+    # test_text = '''The COVID-19 pandemic, caused by the novel coronavirus, has affected the world in unprecedented ways.
+    #   As of September 2021, over 220 million cases have been reported worldwide, with more than 4.5 million deaths. 
+    #   The pandemic has caused significant disruptions to daily life, with many countries implementing measures such as 
+    #   lockdowns and travel restrictions to slow the spread of the virus. The development and distribution of vaccines have 
+    #   provided hope for a return to normalcy, but the pandemic continues to have a major impact on global health and the economy.'''
+    # compre(test_text,'dominant language')
+    #rekog('s3://bucket9069/oldtimer-1197800__340.jpg',['Car'])
 
 
 
