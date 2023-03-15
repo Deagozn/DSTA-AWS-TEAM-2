@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<head>
+    <title>Scam-Text-Detector</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='scamtext.css')}}">
+</head>
+<body>
+    <div class="container">
+        <h2>Scam Text Detector</h2>
+        <form action="{{ url_for('ScamTextInput') }}" method="POST">
+            <div class="inputbox">
+                <input type="textarea" required="required" size="50" name="user_input">
+                <span>Paste text here</span>
+            </div>
+            <div class="inputbox">
+                <input type="submit" value="Submit" name="submit">
+            </div>
+        </form>
+    </div>
+    
+</body>
+</html>

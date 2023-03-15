@@ -18,6 +18,19 @@ app = Flask(__name__)
 def home():
     return render_template('home.html')
 
+@app.route('/scamtextdet')
+def ScamTextDetect():
+    return render_template('scamtextdetector.html')
+
+@app.route('/scamcalldet')
+def ScamCallDetect():
+    return render_template('scamcalldetector.html')
+
+@app.route('/login', methods=["POST"])
+def ScamTextInput():
+    user_input = request.form["user_input"]
+    pass
+
 
 if __name__ == "__main__":
     app.run(debug=True)
