@@ -2,7 +2,8 @@
 	- text - write str input to .txtfile(new created with python open() function) - upload *
 	- call - upload mp3 file (from github)
 2. comprehend
-	- text - run through custom classification  * -- follow site instructions: https://docs.aws.amazon.com/comprehend/latest/dg/class-sync-api.html
+	- text - run through custom classification  * -- follow site instructions: https://docs.aws.amazon.com/comprehend/latest/dg/class-sync-api.html 
+	& https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/comprehend/client/start_document_classification_job.html
 	- call - transcribe - run through custom classification
 3. download output file from s3 output
 	- both * --https://boto3.amazonaws.com/v1/documentation/api/latest/guide/s3-uploading-files.html
