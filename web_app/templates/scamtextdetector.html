@@ -4,6 +4,11 @@
     <link rel="stylesheet" href="{{url_for('static', filename='scamtext.css')}}">
 </head>
 <body>
+    <div class="back">
+        <a href="{{url_for('home')}}">
+            <span>Back</span>
+        </a>
+    </div>
     <div class="container">
         <h2>Scam Text Detector</h2>
         <form action="{{ url_for('ScamTextInput') }}" method="POST">
