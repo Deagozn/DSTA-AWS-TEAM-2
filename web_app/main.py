@@ -234,6 +234,7 @@ def main(input_str):             #Wrtie main code here
     file_upload("C:\code stuff\Code Stuff\dsta code\load_text\{}.txt".format(file_n))
     time.sleep(0.5)
     scam_detector("job1", "s3://textupload9069/{}.txt".format(file_n))
+    time.sleep(380)
     s3c.download_file("dcyberv3", "output.tar.gz", "D:\Code Stuff\python\DSTA AWS Code\output.tar.gz")
     tar_decomp("D:\Code Stuff\python\DSTA AWS Code\output.tar.gz","predictions.jsonl","C:\code stuff\Code Stuff\dsta code\output")
     result = json.loads("C:\code stuff\Code Stuff\dsta code\output\predictions.jsonl")
