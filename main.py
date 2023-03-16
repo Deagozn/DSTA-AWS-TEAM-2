@@ -187,7 +187,7 @@ def trscbe(job_name, file, m_format): #all variables should be in STR form
     print("Transcribed: ")
     print(transcript_df.to_string(index=False))
 
-def tar_decomp(c_file_name,e_file_name,location):               # c_file_name is the file to be decompressed, e_file_name is the file to be extracted, location is where to store the extracted file
+def tar_decomp(c_file_name,e_file_name,location):      # c_file_name is the file to be decompressed, e_file_name is the file to be extracted, location is where to store the extracted file
     file = tarfile.open(c_file_name)
     file.extract(e_file_name,location)
     file.close()
