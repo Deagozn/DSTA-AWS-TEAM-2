@@ -238,6 +238,7 @@ def main(input_str):             #Wrtie main code here
     tar_decomp("output.tar.gz","predictions.jsonl","C:\code stuff\Code Stuff\dsta code\output")
     result = json.loads("C:\code stuff\Code Stuff\dsta code\output\predictions.jsonl")
     print("end")
+    #os.remove("C:\code stuff\Code Stuff\dsta code\output\predictions.jsonl") #uncomment this if eveth else works
     return result["Classes"][0]
 
 
