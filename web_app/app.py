@@ -39,12 +39,12 @@ def ScamTextInput():
                      'status':'yes',
                      'confidence':'99.6'}
     output = main(user_input) #output should be json_extracted["Classes"][0]
-    #output = {"Name":"ham","Score":0.999}
+    # output = {"Name":"ham","Score":0.999}
     if output["Name"] == "ham":
         status = "No"
     elif output["Name"] == "spam":
         status = "Yes"
-    confidence = output["Score"]
+    confidence = str(float(output["Score"])*100)
     return render_template("output.html",text=user_input,status=status,confidence=confidence)
 
 
