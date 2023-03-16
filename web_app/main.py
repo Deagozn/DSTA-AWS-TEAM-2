@@ -9,6 +9,7 @@ import pandas as pd
 import numpy as np
 import json
 import tarfile
+from models import read_json
 
 
 
@@ -233,16 +234,19 @@ def main(input_str):             #Wrtie main code here
     time.sleep(0.5)
     file_upload("C:\code stuff\Code Stuff\dsta code\load_text\{}.txt".format(file_n))
     time.sleep(0.5)
-    scam_detector("job1", "s3://textupload9069/{}.txt".format(file_n))
+    jobid = scam_detector("job1", "s3://textupload9069/{}.txt".format(file_n))['JobId']
+    print(jobid)
     time.sleep(380)
-    s3c.download_file("dcyberv6", "249986139069-CLN-49cecce03d19a58e59b5e92fa60c9650/output/output.tar.gz", "D:\Code Stuff\python\DSTA AWS Code\output.tar.gz")
-    tar_decomp("D:\Code Stuff\python\DSTA AWS Code\output.tar.gz","predictions.jsonl","C:\code stuff\Code Stuff\dsta code\output")
-    result = json.loads("C:\code stuff\Code Stuff\dsta code\output\predictions.jsonl")
+    s3c.download_file("dcyberv6", "249986139069-CLN-{}/output/output.tar.gz".format(jobid), "C:\code stuff\Code Stuff\dsta code\downloaded\output.tar.gz")
+    tar_decomp("C:\code stuff\Code Stuff\dsta code\downloaded\output.tar.gz","predictions.jsonl","C:\code stuff\Code Stuff\dsta code\output")
+    # result = json.loads("C:\code stuff\Code Stuff\dsta code\output\predictions.jsonl")
+    result = read_json("C:\code stuff\Code Stuff\dsta code\output\predictions.jsonl")
+    # print(result["Classes"][0])
     print("end")
-    os.remove("C:\code stuff\Code Stuff\dsta code\output\predictions.jsonl") #uncomment this if eveth else works
+    # #os.remove("C:\code stuff\Code Stuff\dsta code\output\predictions.jsonl") #uncomment this if eveth else works
     return result["Classes"][0]
     
 
 
 if __name__ == "__main__":
-    main("")
+    main("hello")

@@ -3,7 +3,7 @@ from flask import Flask, render_template, url_for, redirect, request,\
      send_from_directory
 import os.path
 import time
-# from main1 import main
+from main import main
 #import ast
 
 #### If our web app involves the user uploading files, we'll probably need these.
@@ -38,8 +38,8 @@ def ScamTextInput():
     sample_output = {'text':'We are the licensed money lender in Singapore. is amongst the pioneer loan service providers in Singapore. Are you have financial problems? Contact us for more informations and our friendly staff will be glad to assist you with your financial needs.',
                      'status':'yes',
                      'confidence':'99.6'}
-    #output = main(user_input) #output should be json_extracted["Classes"][0]
-    output = {"Name":"ham","Score":0.999}
+    output = main(user_input) #output should be json_extracted["Classes"][0]
+    #output = {"Name":"ham","Score":0.999}
     if output["Name"] == "ham":
         status = "No"
     elif output["Name"] == "spam":

@@ -11,8 +11,6 @@ def uncompress(filename):
 def read_json(filename):
     f = open(filename)
     data = json.load(f)
-    lst = []
-    for i in data:
-        lst.append(i)
     f.close()
-    os.remove(filename)
+    # os.remove(filename)
+    return data
