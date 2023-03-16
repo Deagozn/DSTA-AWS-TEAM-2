@@ -11,6 +11,7 @@ import json
 import tarfile
 
 
+
 mySession = boto3.session.Session()
 awsRegion = mySession.region_name
 role = get_execution_role()
@@ -204,10 +205,11 @@ def scam_detector(job_name, file):
         },
         OutputDataConfig = 
         {
-            'S3Uri':'s3://dcyberv/Scam Detect Output/'
+            'S3Uri':'s3://dcyberv3'
         },
-        DataAccessRoleArn='arn:aws:iam::249986139069:role/service-role/AmazonComprehendServiceRole-90693'
+        DataAccessRoleArn='arn:aws:iam::249986139069:role/service-role/AmazonComprehendServiceRoleS3FullAccess-90695'
     )
+    return start_response
 
 def create_text_file(text_for_file,file_name):
     f = open("C:\code stuff\Code Stuff\dsta code\load_text\{}.txt".format(file_name),"w")
@@ -220,25 +222,21 @@ def file_upload(file_name, object_name=None):
 
     s3c.upload_file(file_name, "textupload9069", object_name)
 
-#def file_download():
 
 
 
 
-
-def main():             #Wrtie main code here
+def main(input_str):             #Wrtie main code here
     print("start")
-    #trscbe('test2', 's3://bucket9069/WhatsApp Audio 2023-03-15 at 10.35.57.mp3', 'mp3')
-    test_text = '''The COVID-19 pandemic, caused by the novel coronavirus, has affected the world in unprecedented ways. 
-As of September 2021, over 220 million cases have been reported worldwide, with more than 4.5 million deaths. 
-The pandemic has caused significant disruptions to daily life, with many countries implementing measures such as 
-lockdowns and travel restrictions to slow the spread of the virus. The development and distribution of vaccines have 
-provided hope for a return to normalcy, but the pandemic continues to have a major impact on global health and the economy.'''
-    # compre(test_text,'dominant language')
-    #scam_detector('testing2','s3://dcyberv/test not scam..txt')
-    create_text_file(test_text,"Test")
+    file_n = "file1"
+    create_text_file(input_str, file_n)
     time.sleep(0.5)
-    file_upload("C:\code stuff\Code Stuff\dsta code\load_text\Test.txt")
+    file_upload("C:\code stuff\Code Stuff\dsta code\load_text\{}.txt".format(file_n))
+    time.sleep(0.5)
+    scam_detector("job1", "s3://textupload9069/{}.txt".format(file_n))
+    
+    tar_decomp("output.tar.gz","predictions.jsonl","C:\code stuff\Code Stuff\dsta code\output")
+    result = json.loads("C:\code stuff\Code Stuff\dsta code\output\predictions.jsonl")
     print("end")
 
 
