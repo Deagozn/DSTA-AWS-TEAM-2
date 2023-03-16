@@ -10,6 +10,7 @@ import numpy as np
 import json
 import tarfile
 
+
 mySession = boto3.session.Session()
 awsRegion = mySession.region_name
 role = get_execution_role()
@@ -199,7 +200,7 @@ def scam_detector(job_name, file):
         InputDataConfig = 
         {
             'S3Uri':file,
-            'InputFormat':'ONE_DOC_PER_LINE',
+            'InputFormat':'ONE_DOC_PER_FILE',
         },
         OutputDataConfig = 
         {
@@ -208,19 +209,37 @@ def scam_detector(job_name, file):
         DataAccessRoleArn='arn:aws:iam::249986139069:role/service-role/AmazonComprehendServiceRole-90693'
     )
 
+def create_text_file(text_for_file,file_name):
+    f = open("C:\code stuff\Code Stuff\dsta code\load_text\{}.txt".format(file_name),"w")
+    f.write(text_for_file)
+    f.close()
+
+def file_upload(file_name, object_name=None):
+    if object_name is None:
+        object_name = os.path.basename(file_name)
+
+    s3c.upload_file(file_name, "textupload9069", object_name)
+
+#def file_download():
+
+
+
 
 
 def main():             #Wrtie main code here
     print("start")
     #trscbe('test2', 's3://bucket9069/WhatsApp Audio 2023-03-15 at 10.35.57.mp3', 'mp3')
-    # test_text = '''The COVID-19 pandemic, caused by the novel coronavirus, has affected the world in unprecedented ways.
-    #   As of September 2021, over 220 million cases have been reported worldwide, with more than 4.5 million deaths. 
-    #   The pandemic has caused significant disruptions to daily life, with many countries implementing measures such as 
-    #   lockdowns and travel restrictions to slow the spread of the virus. The development and distribution of vaccines have 
-    #   provided hope for a return to normalcy, but the pandemic continues to have a major impact on global health and the economy.'''
+    test_text = '''The COVID-19 pandemic, caused by the novel coronavirus, has affected the world in unprecedented ways. 
+As of September 2021, over 220 million cases have been reported worldwide, with more than 4.5 million deaths. 
+The pandemic has caused significant disruptions to daily life, with many countries implementing measures such as 
+lockdowns and travel restrictions to slow the spread of the virus. The development and distribution of vaccines have 
+provided hope for a return to normalcy, but the pandemic continues to have a major impact on global health and the economy.'''
     # compre(test_text,'dominant language')
-    #rekog('s3://bucket9069/oldtimer-1197800__340.jpg',['Car'])
-    scam_detector('testing','s3://dcyberv/test not scam..txt')
+    #scam_detector('testing2','s3://dcyberv/test not scam..txt')
+    create_text_file(test_text,"Test")
+    time.sleep(0.5)
+    file_upload("C:\code stuff\Code Stuff\dsta code\load_text\Test.txt")
+    print("end")
 
 
 
