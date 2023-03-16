@@ -192,11 +192,27 @@ def tar_decomp(c_file_name,e_file_name,location):               # c_file_name is
     file.extract(e_file_name,location)
     file.close()
 
+def scam_detector(job_name, file):
+    start_response = comprehend.start_document_classification_job(
+        JobName = job_name,
+        DocumentClassifierArn = 'arn:aws:comprehend:us-east-1:249986139069:document-classifier/scamdetect/version/v1',
+        InputDataConfig = 
+        {
+            'S3Uri':file,
+            'InputFormat':'ONE_DOC_PER_LINE',
+        },
+        OutputDataConfig = 
+        {
+            'S3Uri':'s3://dcyberv/Scam Detect Output/'
+        },
+        DataAccessRoleArn='arn:aws:iam::249986139069:role/service-role/AmazonComprehendServiceRole-90693'
+    )
+
 
 
 def main():             #Wrtie main code here
     print("start")
-    trscbe('test2', 's3://bucket9069/WhatsApp Audio 2023-03-15 at 10.35.57.mp3', 'mp3')
+    #trscbe('test2', 's3://bucket9069/WhatsApp Audio 2023-03-15 at 10.35.57.mp3', 'mp3')
     # test_text = '''The COVID-19 pandemic, caused by the novel coronavirus, has affected the world in unprecedented ways.
     #   As of September 2021, over 220 million cases have been reported worldwide, with more than 4.5 million deaths. 
     #   The pandemic has caused significant disruptions to daily life, with many countries implementing measures such as 
@@ -204,6 +220,7 @@ def main():             #Wrtie main code here
     #   provided hope for a return to normalcy, but the pandemic continues to have a major impact on global health and the economy.'''
     # compre(test_text,'dominant language')
     #rekog('s3://bucket9069/oldtimer-1197800__340.jpg',['Car'])
+    scam_detector('testing','s3://dcyberv/test not scam..txt')
 
 
 
