@@ -235,12 +235,12 @@ def main(input_str):             #Wrtie main code here
     time.sleep(0.5)
     scam_detector("job1", "s3://textupload9069/{}.txt".format(file_n))
     time.sleep(380)
-    # s3c.download_file("dcyberv3", "output.tar.gz", "D:\Code Stuff\python\DSTA AWS Code\output.tar.gz")
-    # tar_decomp("D:\Code Stuff\python\DSTA AWS Code\output.tar.gz","predictions.jsonl","C:\code stuff\Code Stuff\dsta code\output")
-    # result = json.loads("C:\code stuff\Code Stuff\dsta code\output\predictions.jsonl")
-    # print("end")
-    # os.remove("C:\code stuff\Code Stuff\dsta code\output\predictions.jsonl") #uncomment this if eveth else works
-    # return result["Classes"][0]
+    s3c.download_file("dcyberv6", "249986139069-CLN-49cecce03d19a58e59b5e92fa60c9650/output/output.tar.gz", "D:\Code Stuff\python\DSTA AWS Code\output.tar.gz")
+    tar_decomp("D:\Code Stuff\python\DSTA AWS Code\output.tar.gz","predictions.jsonl","C:\code stuff\Code Stuff\dsta code\output")
+    result = json.loads("C:\code stuff\Code Stuff\dsta code\output\predictions.jsonl")
+    print("end")
+    os.remove("C:\code stuff\Code Stuff\dsta code\output\predictions.jsonl") #uncomment this if eveth else works
+    return result["Classes"][0]
     
 
 
