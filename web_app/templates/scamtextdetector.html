@@ -2,6 +2,15 @@
 <head>
     <title>Scam-Text-Detector</title>
     <link rel="stylesheet" href="{{url_for('static', filename='scamtext.css')}}">
+    <script>
+        function navigate() {
+            //window.location.href = 'output';  // Redirects user to the /output when analyse is finished
+        }
+        function load(){
+            //fetch('/').then(navigate); // Analyse and then calls navigate() function
+        }
+      
+    </script>
 </head>
 <body>
     <div class="back">
@@ -17,7 +26,7 @@
                 <span>Paste text here</span>
             </div>
             <div class="inputbox">
-                <input type="submit" value="Submit" name="submit">
+                <input type="submit" value="Submit" name="submit" onclick="load();">
             </div>
         </form>
     </div>

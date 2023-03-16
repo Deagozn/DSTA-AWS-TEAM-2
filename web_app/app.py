@@ -2,7 +2,7 @@
 from flask import Flask, render_template, url_for, redirect, request,\
      send_from_directory
 import os.path
-#import time
+import time
 #import ast
 
 #### If our web app involves the user uploading files, we'll probably need these.
@@ -20,17 +20,30 @@ def home():
 
 @app.route('/scamtextdet')
 def ScamTextDetect():
+    #time.sleep(10)
     return render_template('scamtextdetector.html')
 
 @app.route('/scamcalldet')
 def ScamCallDetect():
     return render_template('scamcalldetector.html')
 
-@app.route('/login', methods=["POST"])
-def ScamTextInput():
-    user_input = request.form["user_input"]
-    pass
+#@app.route('/loading')
+#def loading():
+    #return render_template("loading.html")
 
+@app.route('/output', methods=["POST"])
+def ScamTextInput():
+    time.sleep(10)
+    print("BBBBBBB")
+    user_input = request.form["user_input"]
+    #call function from main.py here / send input over
+    #time.sleep(10) #simulate processing time
+    return render_template("output.html")
+
+#@app.route('/output')
+#def analysis_output():
+    #return render_template('output.html')
+ 
 
 if __name__ == "__main__":
     app.run(debug=True)
