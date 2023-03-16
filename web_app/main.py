@@ -205,7 +205,7 @@ def scam_detector(job_name, file):
         },
         OutputDataConfig = 
         {
-            'S3Uri':'s3://dcyberv3'
+            'S3Uri':'s3://dcyberv6'
         },
         DataAccessRoleArn='arn:aws:iam::249986139069:role/service-role/AmazonComprehendServiceRoleS3FullAccess-90695'
     )
@@ -235,14 +235,14 @@ def main(input_str):             #Wrtie main code here
     time.sleep(0.5)
     scam_detector("job1", "s3://textupload9069/{}.txt".format(file_n))
     time.sleep(380)
-    s3c.download_file("dcyberv3", "output.tar.gz", "D:\Code Stuff\python\DSTA AWS Code\output.tar.gz")
-    tar_decomp("D:\Code Stuff\python\DSTA AWS Code\output.tar.gz","predictions.jsonl","C:\code stuff\Code Stuff\dsta code\output")
-    result = json.loads("C:\code stuff\Code Stuff\dsta code\output\predictions.jsonl")
-    print("end")
-    os.remove("C:\code stuff\Code Stuff\dsta code\output\predictions.jsonl") #uncomment this if eveth else works
-    return result["Classes"][0]
-
+    # s3c.download_file("dcyberv3", "output.tar.gz", "D:\Code Stuff\python\DSTA AWS Code\output.tar.gz")
+    # tar_decomp("D:\Code Stuff\python\DSTA AWS Code\output.tar.gz","predictions.jsonl","C:\code stuff\Code Stuff\dsta code\output")
+    # result = json.loads("C:\code stuff\Code Stuff\dsta code\output\predictions.jsonl")
+    # print("end")
+    # os.remove("C:\code stuff\Code Stuff\dsta code\output\predictions.jsonl") #uncomment this if eveth else works
+    # return result["Classes"][0]
+    
 
 
 if __name__ == "__main__":
-    main("test")
+    main("")
