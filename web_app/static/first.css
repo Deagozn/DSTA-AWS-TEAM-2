@@ -13,22 +13,7 @@ body {
     align-items: center;
     background: #031321;
 }
-.box {
-    position: absolute;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
 
-.square {
-    position: relative;
-    width: 750px;
-    height: 750px;
-    background: url('app_images/logo.png');
-    background-size: 750px 750px;
-    background-repeat: no-repeat;
-}
 .container {
     margin: auto;
     position: relative;

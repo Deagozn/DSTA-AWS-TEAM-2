@@ -20,30 +20,24 @@ def home():
 
 @app.route('/scamtextdet')
 def ScamTextDetect():
-    #time.sleep(10)
     return render_template('scamtextdetector.html')
 
 @app.route('/scamcalldet')
 def ScamCallDetect():
     return render_template('scamcalldetector.html')
 
-#@app.route('/loading')
-#def loading():
-    #return render_template("loading.html")
-
 @app.route('/output', methods=["POST"])
 def ScamTextInput():
-    time.sleep(10)
-    print("BBBBBBB")
+    time.sleep(1) #simulate long processing time
     user_input = request.form["user_input"]
+    print(user_input)
     #call function from main.py here / send input over
-    #time.sleep(10) #simulate processing time
-    return render_template("output.html")
+    #assume output as dict
+    sample_output = {'text':'We are the licensed money lender in Singapore. is amongst the pioneer loan service providers in Singapore. Are you have financial problems? Contact us for more informations and our friendly staff will be glad to assist you with your financial needs.',
+                     'status':'yes',
+                     'confidence':'99.6'}
+    return render_template("output.html",text=sample_output['text'],status=sample_output['status'],confidence=sample_output['confidence'])
 
-#@app.route('/output')
-#def analysis_output():
-    #return render_template('output.html')
- 
 
 if __name__ == "__main__":
     app.run(debug=True)

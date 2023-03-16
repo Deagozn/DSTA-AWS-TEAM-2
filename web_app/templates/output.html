@@ -1,8 +1,18 @@
 <!DOCTYPE html>
 <head>
-    <title>Document</title>
+    <title>Output</title>
+    <link rel="stylesheet" href=" {{url_for('static',filename='output.css')}} ">
 </head>
 <body>
-    output page
+    <div class="back">
+        <a href="{{url_for('home')}}">
+            <span>Home</span>
+        </a>
+    </div>
+    <div class="container">
+        <p><b>Analysed text</b>:{{text}}</p>
+        <h2>Scam text:{{status}} ---------------- Confidence:{{confidence}}</h2>  
+    </div>
+    
 </body>
 </html>
